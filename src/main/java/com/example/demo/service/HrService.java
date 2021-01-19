@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.bean.Hr;
 import com.example.demo.mapper.HrMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,10 +22,14 @@ import org.springframework.stereotype.Service;
 public class HrService implements UserDetailsService {
 
     @Autowired
-    HrMapper mapper;
+    HrMapper hrMapper;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return null;
+        Hr hr = hrMapper.loadUserByUsername(s);
+        if (hr == null) {
+            throw new UsernameNotFoundException("账号不存在");
+        }
+        return hr;
     }
 }
