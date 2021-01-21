@@ -21,8 +21,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         PrintWriter out = response.getWriter();
         Hr hr = (Hr) authentication.getPrincipal();
         hr.setPassword(null);
-        RespBean respBean = RespBean.ok("登陆成功", hr);
-        out.write(new ObjectMapper().writeValueAsString(respBean));
+        out.write(new ObjectMapper().writeValueAsString(RespBean.ok("登陆成功", hr)));
         out.flush();
         out.close();
     }

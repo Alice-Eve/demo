@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.bean.RespBean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,12 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
  * @GitHub https://github.com/Alice-Eve
  * @博客 http://
  * @网站 http://
- * @时间 2021-01-17 19:00
+ * @时间 2021-01-19 18:50
  **/
+
 @RestController
-public class LoginController {
-    @GetMapping("/login")
-    public RespBean login() {
-        return RespBean.error("尚未登录，请登录!");
+public class HelloController {
+    @GetMapping("/hello")
+    public String hello() {
+        return "hello";
     }
 }

@@ -7,15 +7,46 @@
     <result column="path" property="path" jdbcType="VARCHAR" />
     <result column="component" property="component" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="iconCls" property="iconcls" jdbcType="VARCHAR" />
-    <result column="keepAlive" property="keepalive" jdbcType="BIT" />
-    <result column="requireAuth" property="requireauth" jdbcType="BIT" />
-    <result column="parentId" property="parentid" jdbcType="INTEGER" />
+    <result column="iconCls" property="iconCls" jdbcType="VARCHAR" />
+    <result column="parentId" property="parentId" jdbcType="INTEGER" />
     <result column="enabled" property="enabled" jdbcType="BIT" />
+    <association property="meta" javaType="com.example.demo.bean.Meta">
+      <result column="keepAlive" property="keepAlive" jdbcType="BIT" />
+      <result column="requireAuth" property="requireAuth" jdbcType="BIT" />
+    </association>
+  </resultMap>
+  <resultMap id="Menus2" type="com.example.demo.bean.Menu" extends="BaseResultMap">
+    <collection property="children" ofType="com.example.demo.bean.Menu">
+      <id column="id2" property="id" jdbcType="INTEGER" />
+      <result column="url2" property="url" jdbcType="VARCHAR" />
+      <result column="path2" property="path" jdbcType="VARCHAR" />
+      <result column="component2" property="component" jdbcType="VARCHAR" />
+      <result column="name2" property="name" jdbcType="VARCHAR" />
+      <result column="iconCls2" property="iconCls" jdbcType="VARCHAR" />
+      <result column="parentId2" property="parentId" jdbcType="INTEGER" />
+      <result column="enabled2" property="enabled" jdbcType="BIT" />
+      <association property="meta" javaType="com.example.demo.bean.Meta">
+        <result column="keepAlive2" property="keepAlive" jdbcType="BIT" />
+        <result column="requireAuth2" property="requireAuth" jdbcType="BIT" />
+      </association>
+    </collection>
+  </resultMap>
+  <resultMap id="MenuWithRole" type="com.example.demo.bean.Menu" extends="BaseResultMap">
+    <collection property="roles" ofType="com.example.demo.bean.Role">
+      <id column="rid" property="id"/>
+      <result column="rname" property="name"/>
+      <result column="rnameZh" property="nameZh"/>
+    </collection>
   </resultMap>
   <sql id="Base_Column_List" >
     id, url, path, component, name, iconCls, keepAlive, requireAuth, parentId, enabled
   </sql>
+  <select id="getAllMenusWithRole" resultMap="MenuWithRole">
+    SELECT m.*,r.`id` as rid,r.`name`as rname,r.`nameZh` as rnameZh FROM menu m,menu_role mr,role r WHERE m.`id`=mr.`mid` and mr.`rid`=r.`id` order by m.`id`
+  </select>
+  <select id="getMenuByHrId" resultMap="Menus2">
+    select m1.*,m2.`id` as id2,m2.`component` as component2,m2.`enabled` as enabled2,m2.`iconCls` as iconCls2,m2.`keepAlive` as keepAlive2,m2.`name` as name2,m2.`parentId` as parentId2,m2.`requireAuth` as requireAuth2 ,m2.`path` as path2 FROM menu m1,menu m2,hr_role hrr,menu_role mr WHERE m1.`id`=m2.`parentId` AND hrr.`hrid`=3 and hrr.`rid`=mr.`rid` and mr.`mid`=m2.`id` and m2.`enabled`=true order by m1.`id`,m2.`id`
+  </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -32,8 +63,8 @@
       keepAlive, requireAuth, parentId, 
       enabled)
     values (#{id,jdbcType=INTEGER}, #{url,jdbcType=VARCHAR}, #{path,jdbcType=VARCHAR}, 
-      #{component,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{iconcls,jdbcType=VARCHAR}, 
-      #{keepalive,jdbcType=BIT}, #{requireauth,jdbcType=BIT}, #{parentid,jdbcType=INTEGER}, 
+      #{component,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{iconCls,jdbcType=VARCHAR}, 
+      #{keepAlive,jdbcType=BIT}, #{requireAuth,jdbcType=BIT}, #{parentId,jdbcType=INTEGER}, 
       #{enabled,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="com.example.demo.bean.Menu" >
@@ -54,16 +85,16 @@
       <if test="name != null" >
         name,
       </if>
-      <if test="iconcls != null" >
+      <if test="iconCls != null" >
         iconCls,
       </if>
-      <if test="keepalive != null" >
+      <if test="keepAlive != null" >
         keepAlive,
       </if>
-      <if test="requireauth != null" >
+      <if test="requireAuth != null" >
         requireAuth,
       </if>
-      <if test="parentid != null" >
+      <if test="parentId != null" >
         parentId,
       </if>
       <if test="enabled != null" >
@@ -86,17 +117,17 @@
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="iconcls != null" >
-        #{iconcls,jdbcType=VARCHAR},
+      <if test="iconCls != null" >
+        #{iconCls,jdbcType=VARCHAR},
       </if>
-      <if test="keepalive != null" >
-        #{keepalive,jdbcType=BIT},
+      <if test="keepAlive != null" >
+        #{keepAlive,jdbcType=BIT},
       </if>
-      <if test="requireauth != null" >
-        #{requireauth,jdbcType=BIT},
+      <if test="requireAuth != null" >
+        #{requireAuth,jdbcType=BIT},
       </if>
-      <if test="parentid != null" >
-        #{parentid,jdbcType=INTEGER},
+      <if test="parentId != null" >
+        #{parentId,jdbcType=INTEGER},
       </if>
       <if test="enabled != null" >
         #{enabled,jdbcType=BIT},
@@ -118,17 +149,17 @@
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="iconcls != null" >
-        iconCls = #{iconcls,jdbcType=VARCHAR},
+      <if test="iconCls != null" >
+        iconCls = #{iconCls,jdbcType=VARCHAR},
       </if>
-      <if test="keepalive != null" >
-        keepAlive = #{keepalive,jdbcType=BIT},
+      <if test="keepAlive != null" >
+        keepAlive = #{keepAlive,jdbcType=BIT},
       </if>
-      <if test="requireauth != null" >
-        requireAuth = #{requireauth,jdbcType=BIT},
+      <if test="requireAuth != null" >
+        requireAuth = #{requireAuth,jdbcType=BIT},
       </if>
-      <if test="parentid != null" >
-        parentId = #{parentid,jdbcType=INTEGER},
+      <if test="parentId != null" >
+        parentId = #{parentId,jdbcType=INTEGER},
       </if>
       <if test="enabled != null" >
         enabled = #{enabled,jdbcType=BIT},
@@ -142,10 +173,10 @@
       path = #{path,jdbcType=VARCHAR},
       component = #{component,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},
-      iconCls = #{iconcls,jdbcType=VARCHAR},
-      keepAlive = #{keepalive,jdbcType=BIT},
-      requireAuth = #{requireauth,jdbcType=BIT},
-      parentId = #{parentid,jdbcType=INTEGER},
+      iconCls = #{iconCls,jdbcType=VARCHAR},
+      keepAlive = #{keepAlive,jdbcType=BIT},
+      requireAuth = #{requireAuth,jdbcType=BIT},
+      parentId = #{parentId,jdbcType=INTEGER},
       enabled = #{enabled,jdbcType=BIT}
     where id = #{id,jdbcType=INTEGER}
   </update>
