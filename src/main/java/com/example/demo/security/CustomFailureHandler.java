@@ -29,7 +29,7 @@ public class CustomFailureHandler implements AuthenticationFailureHandler {
         } else if (exception instanceof DisabledException) {
             respBean.setMsg("账户禁用");
         } else if (exception instanceof BadCredentialsException) {
-            respBean.setMsg("用户名或者密码输入错误，请重新输入!");
+            respBean.setMsg("账号或密码输入错误，请重新输入!");
         }
         out.write(new ObjectMapper().writeValueAsString(respBean));
         out.flush();
