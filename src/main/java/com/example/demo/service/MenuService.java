@@ -22,6 +22,7 @@ import java.util.List;
 public class MenuService {
     @Autowired
     MenuMapper menuMapper;
+
     public List<Menu> getMenuByHrId() {
         return menuMapper.getMenuByHrId(((Hr) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId());
     }
