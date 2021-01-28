@@ -9,17 +9,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.session.ConcurrentSessionFilter;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 
 /**
@@ -73,6 +68,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .csrf()
-                .disable();
+                .disable()
+                .exceptionHandling()
+                //没有认证时，在这里处理结果，不要重定向
+                .authenticationEntryPoint((req, resp, authException) -> {
+                            resp.setContentType("application/json;charset=utf-8");
+                            resp.setStatus(401);
+                            PrintWriter out = resp.getWriter();
+                            RespBean respBean = RespBean.error("访问失败");
+                            if (authException instanceof InsufficientAuthenticationException) {
+                                respBean.setMsg("请求失败");
+                            }
+                            out.write(new ObjectMapper().writeValueAsString(respBean));
+                            out.flush();
+                            out.close();
+                        }
+                );
     }
 }
