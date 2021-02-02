@@ -1,6 +1,7 @@
 package com.example.demo.mapper;
 
 import com.example.demo.bean.MenuRole;
+import org.apache.ibatis.annotations.Param;
 
 public interface MenuRoleMapper {
     int deleteByPrimaryKey(Integer id);
@@ -14,4 +15,8 @@ public interface MenuRoleMapper {
     int updateByPrimaryKeySelective(MenuRole record);
 
     int updateByPrimaryKey(MenuRole record);
+
+    void deleteByRid(Integer rid);
+
+    Integer insertRecord(@Param("rid")Integer rid,@Param("mids") Integer[] mids);
 }

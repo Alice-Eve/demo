@@ -2,6 +2,8 @@ package com.example.demo.mapper;
 
 import com.example.demo.bean.JobLevel;
 
+import java.util.List;
+
 public interface JobLevelMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +16,8 @@ public interface JobLevelMapper {
     int updateByPrimaryKeySelective(JobLevel record);
 
     int updateByPrimaryKey(JobLevel record);
+
+    List<JobLevel> getAllJobLevels();
+
+    Integer deleteJobLevelsByIds(Integer[] ids);
 }

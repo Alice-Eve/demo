@@ -1,17 +1,20 @@
 package com.example.demo.bean;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
+
 @Data
 public class JobLevel {
     private Integer id;
 
     private String name;
 
-    private String titlelevel;
+    private String titleLevel;
 
-    private Date createdate;
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
+    private Date createDate;
 
     private Boolean enabled;
 
