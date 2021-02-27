@@ -39,4 +39,25 @@ public class HrController {
         return RespBean.error("更新失败!");
     }
 
+    @GetMapping("/roles")
+    public List<Role> getAllRoles() {
+        return roleService.getAllRoles();
+    }
+
+    @PutMapping("/role")
+    public RespBean updateHrRoles(Integer hrid,Integer[] rids) {
+        if (hrService.updateHrRoles(hrid,rids)) {
+            return RespBean.ok("更新成功");
+        }
+        return RespBean.error("更新失败");
+    }
+
+    @DeleteMapping("/{id}")
+    public RespBean deleteHrById(@PathVariable Integer id) {
+        if (hrService.deleteHrById(id) == 1) {
+            return RespBean.ok("删除成功");
+        }
+        return RespBean.error("删除失败");
+    }
+
 }

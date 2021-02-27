@@ -5,6 +5,7 @@ import com.example.demo.bean.Menu;
 import com.example.demo.mapper.MenuMapper;
 import com.example.demo.mapper.MenuRoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.List;
  * @时间 2021-01-20 14:20
  **/
 @Service
+@CacheConfig(cacheNames = "menus_cache")
 public class MenuService {
     @Autowired
     MenuMapper menuMapper;
@@ -29,7 +31,7 @@ public class MenuService {
     MenuRoleMapper menuRoleMapper;
 
     public List<Menu> getMenuByHrId() {
-        return menuMapper.getMenuByHrId(((Hr) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId());
+        return menuMapper.getMenusByHrId(((Hr) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId());
     }
     @Cacheable
     public List<Menu> getAllMenusWithRole() {

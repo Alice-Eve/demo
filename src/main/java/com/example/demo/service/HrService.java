@@ -2,12 +2,14 @@ package com.example.demo.service;
 
 import com.example.demo.bean.Hr;
 import com.example.demo.mapper.HrMapper;
+import com.example.demo.mapper.HrRoleMapper;
 import com.example.demo.utils.HrUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,6 +29,9 @@ public class HrService implements UserDetailsService {
     @Autowired
     HrMapper hrMapper;
 
+    @Autowired
+    HrRoleMapper hrRoleMapper;
+
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         Hr hr = hrMapper.loadUserByUsername(s);
@@ -44,4 +49,16 @@ public class HrService implements UserDetailsService {
     public Integer updateHr(Hr hr) {
         return hrMapper.updateByPrimaryKeySelective(hr);
     }
+
+    @Transactional
+    public boolean updateHrRoles(Integer hrid, Integer[] rids) {
+        hrRoleMapper.deleteByHrid(hrid);
+        return hrRoleMapper.addRole(hrid,rids) == rids.length;
+    }
+
+
+    public Integer deleteHrById(Integer id) {
+        return hrMapper.deleteByPrimaryKey(id);
+    }
+
 }
