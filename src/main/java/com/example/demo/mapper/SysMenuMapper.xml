@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.SysMenuMapper" >
+  <resultMap id="BaseResultMap" type="com.example.demo.model.SysMenu" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="path" property="path" jdbcType="VARCHAR" />
+    <result column="component" property="component" jdbcType="VARCHAR" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="order_num" property="orderNum" jdbcType="TINYINT" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="hide" property="hide" jdbcType="BIT" />
+    <result column="enabled" property="enabled" jdbcType="BIT" />
+    <result column="del_flag" property="delFlag" jdbcType="BIT" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap type="com.example.demo.model.SysMenu" id="Menus2" extends="BaseResultMap">
+    <collection property="children" ofType="com.example.demo.model.SysMenu">
+      <id jdbcType="INTEGER" property="id" column="id2"/>
+      <result jdbcType="VARCHAR" property="name" column="name2" />
+      <result jdbcType="VARCHAR" property="url" column="url2" />
+      <result jdbcType="VARCHAR" property="path" column="path2" />
+      <result jdbcType="VARCHAR" property="component" column="component2" />
+      <result jdbcType="VARCHAR" property="icon" column="icon2" />
+      <result jdbcType="TINYINT" property="orderNum" column="order_num2" />
+      <result jdbcType="INTEGER" property="parentId" column="parent_id2" />
+      <result jdbcType="BIT" property="hide" column="hide2" />
+      <result jdbcType="BIT" property="enabled" column="enabled2" />
+      <result jdbcType="BIT" property="delFlag" column="del_flag2" />
+      <result jdbcType="VARCHAR" property="createUser" column="create_user2" />
+      <result jdbcType="TIMESTAMP" property="createTime" column="create_time2" />
+      <result jdbcType="VARCHAR" property="updateUser" column="update_user2" />
+      <result jdbcType="TIMESTAMP" property="updateTime" column="update_time2" />
+      <result jdbcType="VARCHAR" property="remark" column="remark2" />
+    </collection>
+  </resultMap>
+  <resultMap type="com.example.demo.model.SysMenu" id="MenuWithRole" extends="BaseResultMap">
+    <collection property="roles" ofType="com.example.demo.model.SysRole">
+      <id property="id" column="rid"/>
+      <result property="name" column="rname"/>
+      <result property="description" column="rdescription"/>
+      <result property="num" column="rnum"/>
+      <result property="enabled" column="renabled"/>
+      <result property="delFlag" column="rdelFlag"/>
+      <result property="createUser" column="rcreateUser"/>
+      <result property="createTime" column="rcreateTime"/>
+      <result property="updateUser" column="rupdateUser"/>
+      <result property="updateTime" column="rupdateTime"/>
+      <result property="remark" column="rremark"/>
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, url, path, component, icon, order_num, parent_id, hide, enabled, del_flag, create_user,
+    create_time, update_user, update_time, remark
+  </sql>
+  <select id="getAllMenus" resultMap="BaseResultMap">
+  select <include refid="Base_Column_List" /> from sys_menu
+  </select>
+  <select id="getMenusByUserId" resultMap="Menus2">
+    select distinct m1.*,m2.`id` as id2,m2.name as name2, m2.url as url2,m2.path as path2,m2.component as component2,m2.icon as icon2,m2.order_num as order_num2,m2.parent_id as parent_id2,m2.hide as hide2,m2.enabled as enabled2,m2.del_flag as del_flag2,m2.create_user as create_user2,m2.create_time as create_time2,m2.update_user as update_user2,m2.update_time as update_time2,m2.remark as remark2 from sys_menu m1,sys_menu m2,sys_user_role ur,sys_menu_role mr where m1.`id`=m2.parent_id and ur.user_id=#{id} and ur.role_id=mr.role_id and mr.menu_id=m2.`id` and m2.`enabled`=true order by m1.`id`,m2.`id`
+  </select>
+  <select id="getMenusByUserId2" resultMap="BaseResultMap">
+    select distinct m1.* from sys_menu m1,sys_user_role ur,sys_menu_role mr where m1.parent_id IS NULL and ur.user_id=1 and ur.role_id=mr.role_id and mr.menu_id=m1.`id` and m1.`enabled`=true order by m1.`id`
+  </select>
+  <select id="getAllMenusWithRole" resultMap="MenuWithRole">
+    SELECT m.*,r.id as rid ,r.`name` AS rname ,r.num AS rnum ,r.enabled AS renabled ,r.del_flag AS rdelFlag ,r.create_user AS rcreateUser ,r.create_time AS rcreateTime ,r.update_user AS rupdateUser ,r.update_time AS rupdateTime ,r.remark AS rremark FROM sys_menu m,sys_menu_role mr,sys_role r WHERE m.id=mr.menu_id AND mr.role_id=r.id ORDER BY m.id
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_menu
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteMenus">
+    delete from sys_menu where id in
+    <foreach collection="ids" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+  </delete>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_menu
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.demo.model.SysMenu" >
+    insert into sys_menu (id, name, url, path,
+      component, icon, order_num, 
+      parent_id, hide, enabled, del_flag, 
+      create_user, create_time, update_user, 
+      update_time, remark)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{path,jdbcType=VARCHAR},
+      #{component,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, #{orderNum,jdbcType=TINYINT}, 
+      #{parentId,jdbcType=INTEGER}, #{hide,jdbcType=BIT}, #{enabled,jdbcType=BIT}, #{delFlag,jdbcType=BIT}, 
+      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.demo.model.SysMenu" >
+    insert into sys_menu
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="path != null" >
+        url,
+      </if>
+      <if test="path != null" >
+        path,
+      </if>
+      <if test="component != null" >
+        component,
+      </if>
+      <if test="icon != null" >
+        icon,
+      </if>
+      <if test="orderNum != null" >
+        order_num,
+      </if>
+      <if test="parentId != null" >
+        parent_id,
+      </if>
+      <if test="hide != null" >
+        hide,
+      </if>
+      <if test="enabled != null" >
+        enabled,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null" >
+        #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="component != null" >
+        #{component,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNum != null" >
+        #{orderNum,jdbcType=TINYINT},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="hide != null" >
+        #{hide,jdbcType=BIT},
+      </if>
+      <if test="enabled != null" >
+        #{enabled,jdbcType=BIT},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=BIT},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.model.SysMenu" >
+    update sys_menu
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null" >
+        path = #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        path = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="component != null" >
+        component = #{component,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNum != null" >
+        order_num = #{orderNum,jdbcType=TINYINT},
+      </if>
+      <if test="parentId != null" >
+        parent_id = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="hide != null" >
+        hide = #{hide,jdbcType=BIT},
+      </if>
+      <if test="enabled != null" >
+        enabled = #{enabled,jdbcType=BIT},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=BIT},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.model.SysMenu" >
+    update sys_menu
+    set name = #{name,jdbcType=VARCHAR},
+        url = #{url,jdbcType=VARCHAR},
+        path = #{path,jdbcType=VARCHAR},
+      component = #{component,jdbcType=VARCHAR},
+      icon = #{icon,jdbcType=VARCHAR},
+      order_num = #{orderNum,jdbcType=TINYINT},
+      parent_id = #{parentId,jdbcType=INTEGER},
+      hide = #{hide,jdbcType=BIT},
+      enabled = #{enabled,jdbcType=BIT},
+      del_flag = #{delFlag,jdbcType=BIT},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

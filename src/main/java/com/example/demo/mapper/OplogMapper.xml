@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.OplogMapper" >
+  <resultMap id="BaseResultMap" type="com.example.demo.model.Oplog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="business_type" property="businessType" jdbcType="BIT" />
+    <result column="method_name" property="methodName" jdbcType="VARCHAR" />
+    <result column="method_url" property="methodUrl" jdbcType="VARCHAR" />
+    <result column="request_type" property="requestType" jdbcType="VARCHAR" />
+    <result column="opt_name" property="optName" jdbcType="VARCHAR" />
+    <result column="opt_url" property="optUrl" jdbcType="VARCHAR" />
+    <result column="opt_ip" property="optIp" jdbcType="VARCHAR" />
+    <result column="opt_address" property="optAddress" jdbcType="VARCHAR" />
+    <result column="request_param" property="requestParam" jdbcType="VARCHAR" />
+    <result column="response_data" property="responseData" jdbcType="VARCHAR" />
+    <result column="opt_time" property="optTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, title, business_type, method_name, method_url, request_type, opt_name, opt_url, 
+    opt_ip, opt_address, opt_time
+  </sql>
+  <select id="getTotal" resultType="java.lang.Long">
+    select count(*) from oplog
+    <if test="keywords != null">
+    where title like concat('%',#{keywords},'%')
+    </if>
+  </select>
+  <select id="getOplogPage" resultMap="BaseResultMap">
+    select id, title, business_type, method_name, method_url, request_type, opt_name, opt_url, opt_ip, opt_address, opt_time, request_param ,response_data
+    from oplog
+    <if test="keywords != null">
+      where title like concat('%',#{keywords},'%')
+    </if>
+    <if test="page != null and size != null">
+      limit #{page},#{size}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from oplog
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteOplog">
+    delete from oplog where id in
+    <foreach collection="ids" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+  </delete>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from oplog
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.demo.model.Oplog" >
+    insert into oplog (id, title, business_type, 
+      method_name, method_url, request_type, 
+      opt_name, opt_url, opt_ip, 
+      opt_address, opt_time, request_param, 
+      response_data)
+    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{businessType,jdbcType=BIT}, 
+      #{methodName,jdbcType=VARCHAR}, #{methodUrl,jdbcType=VARCHAR}, #{requestType,jdbcType=VARCHAR}, 
+      #{optName,jdbcType=VARCHAR}, #{optUrl,jdbcType=VARCHAR}, #{optIp,jdbcType=VARCHAR}, 
+      #{optAddress,jdbcType=VARCHAR}, #{optTime,jdbcType=TIMESTAMP}, #{requestParam,jdbcType=LONGVARCHAR}, 
+      #{responseData,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.demo.model.Oplog" >
+    insert into oplog
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="businessType != null" >
+        business_type,
+      </if>
+      <if test="methodName != null" >
+        method_name,
+      </if>
+      <if test="methodUrl != null" >
+        method_url,
+      </if>
+      <if test="requestType != null" >
+        request_type,
+      </if>
+      <if test="optName != null" >
+        opt_name,
+      </if>
+      <if test="optUrl != null" >
+        opt_url,
+      </if>
+      <if test="optIp != null" >
+        opt_ip,
+      </if>
+      <if test="optAddress != null" >
+        opt_address,
+      </if>
+      <if test="optTime != null" >
+        opt_time,
+      </if>
+      <if test="requestParam != null" >
+        request_param,
+      </if>
+      <if test="responseData != null" >
+        response_data,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null" >
+        #{businessType,jdbcType=BIT},
+      </if>
+      <if test="methodName != null" >
+        #{methodName,jdbcType=VARCHAR},
+      </if>
+      <if test="methodUrl != null" >
+        #{methodUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="requestType != null" >
+        #{requestType,jdbcType=VARCHAR},
+      </if>
+      <if test="optName != null" >
+        #{optName,jdbcType=VARCHAR},
+      </if>
+      <if test="optUrl != null" >
+        #{optUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="optIp != null" >
+        #{optIp,jdbcType=VARCHAR},
+      </if>
+      <if test="optAddress != null" >
+        #{optAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="optTime != null" >
+        #{optTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requestParam != null" >
+        #{requestParam,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseData != null" >
+        #{responseData,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.model.Oplog" >
+    update oplog
+    <set >
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null" >
+        business_type = #{businessType,jdbcType=BIT},
+      </if>
+      <if test="methodName != null" >
+        method_name = #{methodName,jdbcType=VARCHAR},
+      </if>
+      <if test="methodUrl != null" >
+        method_url = #{methodUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="requestType != null" >
+        request_type = #{requestType,jdbcType=VARCHAR},
+      </if>
+      <if test="optName != null" >
+        opt_name = #{optName,jdbcType=VARCHAR},
+      </if>
+      <if test="optUrl != null" >
+        opt_url = #{optUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="optIp != null" >
+        opt_ip = #{optIp,jdbcType=VARCHAR},
+      </if>
+      <if test="optAddress != null" >
+        opt_address = #{optAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="optTime != null" >
+        opt_time = #{optTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requestParam != null" >
+        request_param = #{requestParam,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseData != null" >
+        response_data = #{responseData,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.example.demo.model.Oplog" >
+    update oplog
+    set title = #{title,jdbcType=VARCHAR},
+      business_type = #{businessType,jdbcType=BIT},
+      method_name = #{methodName,jdbcType=VARCHAR},
+      method_url = #{methodUrl,jdbcType=VARCHAR},
+      request_type = #{requestType,jdbcType=VARCHAR},
+      opt_name = #{optName,jdbcType=VARCHAR},
+      opt_url = #{optUrl,jdbcType=VARCHAR},
+      opt_ip = #{optIp,jdbcType=VARCHAR},
+      opt_address = #{optAddress,jdbcType=VARCHAR},
+      opt_time = #{optTime,jdbcType=TIMESTAMP},
+      request_param = #{requestParam,jdbcType=LONGVARCHAR},
+      response_data = #{responseData,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.model.Oplog" >
+    update oplog
+    set title = #{title,jdbcType=VARCHAR},
+      business_type = #{businessType,jdbcType=BIT},
+      method_name = #{methodName,jdbcType=VARCHAR},
+      method_url = #{methodUrl,jdbcType=VARCHAR},
+      request_type = #{requestType,jdbcType=VARCHAR},
+      opt_name = #{optName,jdbcType=VARCHAR},
+      opt_url = #{optUrl,jdbcType=VARCHAR},
+      opt_ip = #{optIp,jdbcType=VARCHAR},
+      opt_address = #{optAddress,jdbcType=VARCHAR},
+      opt_time = #{optTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
